@@ -33,14 +33,25 @@ And verify that the character is indeed deleted by calling getparty once more.
 import genericwitticism
 import settings
 
+import time 
+
 def get_character_template_callback(result):
     print result
 
 def submain():
     api = genericwitticism.Genericwitticism(key=settings.KEY)    
     api.start()
+    party = api.get_party(force=True)
+    print "party 1: ", party
+    call = 0
+    while not party:
+        print "call: ", call
+        call += 1
+        time.sleep(0.1)
+        party = api.get_party()
     
-    api.get_character_template(get_character_template_callback)
+    print "party 2: ", party
+    api.stop()
      
      
      
