@@ -8,6 +8,7 @@ Created on 20 apr 2013
 
 import node01
 import node02
+import settings
 
 if __name__ == '__main__':
-    node02.submain()
+    eval(settings.NODE).submain()

@@ -31,12 +31,13 @@ And verify that the character is indeed deleted by calling getparty once more.
 
 
 import genericwitticism
+import settings
 
 def get_character_template_callback(result):
     print result
 
 def submain():
-    api = genericwitticism.Genericwitticism(key="c577eb41-c931-4526-9c52-e9b361eba8c3")    
+    api = genericwitticism.Genericwitticism(key=settings.KEY)    
     api.start()
     
     api.get_character_template(get_character_template_callback)
