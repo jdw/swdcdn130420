@@ -50,8 +50,8 @@ def submain():
     party = api.get_party(force=True, async=False)
     print party
     
-    for c_name in party.get_character_names():
-        api.delete_character(c_name, force=True, async=False)
+    for c_name in party.get_characters():
+        api.delete_character(c, force=True, async=False)
     
     party = api.get_party(force=True, async=False)
     print party

@@ -22,19 +22,24 @@ import string
 class Character(object):
     
     _nextId = 0
-
-    def __init__(self, args = None):
-        
-        self.name =""
-        self._str = 10
-        self._dex = 10
-        self._con = 10
-        self._int = 10
-        self._wis = 10
-        self._allocationPoints = 10
-        self.setData(args)
-        self._id = Character._nextId
-        Character._nextId += 1
+    
+    def __init__(self, args=None):
+        if args:
+            if isinstance(args, str):
+                args = json.loads(args)
+            self.name = args["name"]
+            self._id = args["_id"]
+        else:
+            self.name =""
+            self._str = 10
+            self._dex = 10
+            self._con = 10
+            self._int = 10
+            self._wis = 10
+            self._allocationPoints = 10
+            self.setData(args)
+            self._id = Character._nextId
+            Character._nextId += 1
         
     def _addToAttribute(self, attribute, value):
         if attribute + value <= 18 and attribute + value > 0 and self._allocationPoints >= value:
@@ -173,5 +178,5 @@ class Character(object):
             self._wis = self._setAndValidateData(jdata,"wis", self._wis) 
          
 if __name__ == '__main__':
-    Character.test()
-     
+    data = '{"_id":"rV4HtmCsi","name":"foodddddbar [A04]","exp":0,"level":1,"str":15,"int":10,"wis":10,"dex":15,"con":10,"map":"Bad feeling ruins","inventory":["rE-RS3pbz","rpzLIh1OW","rVR9Ybpkp","rbM80Wc5U","rq2VaRLSt","r0je_I9Wp","rekHN_sU_","rBRQDTO1q","rNuybpVNF","r9J5JLJyV"],"x":19,"y":10,"hp":10,"ac":10,"alloc":0,"speed":2,"light":3,"wieldedweapon":null,"equippedarmor":null,"type":"character","hates":["*"],"attack":{"type":"normal","damage":[1,2]},"teamabbrev":"A04","teamid":"ruEwdTeos","maxhp":10,"resource":"dungeonthing"}'
+    Character(args=data)

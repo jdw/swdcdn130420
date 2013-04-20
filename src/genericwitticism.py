@@ -86,7 +86,12 @@ class Genericwitticism(object):
         urp = {"calldone": False}
         
         def _callback(args):
-            self._party = Party(args)
+            print "party args", args
+            self._party = Party()
+            
+            for char_id in args["characters"]:
+                self.get_character(char_id, force=True, async=False)
+            
             urp["calldone"] = True
             if callback:
                 callback(args)
@@ -130,17 +135,15 @@ class Genericwitticism(object):
         def _callback(args):
             urp["calldone"] = True
             urp["character"] = args
-            
-            #self._party.add_character(Character(args))
+            print "callback: ", args
+            self._party.add_character(Character(args=args))
             
             if callback:
                 callback(args)
                 
-        #j = "{‘name’:’foobar’,’str’:’15’,’dex’:’15’,’con:’10’,’int’:’10’,’wis’:’10’}"
-        j = '{"name":"'+name+'","str":"15","dex":"15","con":"10","int":"10","wis":"10"}'
-        #j = t_char.__str__()
         
-        #print j
+        j = '{"name":"'+name+'","str":"15","dex":"15","con":"10","int":"10","wis":"10"}'
+        
         self._pool_append("createcharacter", j, _callback)
         
         if async: return None
@@ -150,24 +153,26 @@ class Genericwitticism(object):
         return urp["character"]
     
     
-    def get_character(self, name, callback=None, force=False, async=True):
+    def get_character(self, id, callback=None, force=False, async=True):
         """
             api3/?session=<sessionkey>&command=getcharacter&arg=ri4llrZXK
         """
-        if not force and self._party.get_character(name):
-            return self._party.get_character(name)
+        if not force and self._party.get_character_by_id(id):
+            return self._party.get_character_by_id(id)
         
-        self._party.remove_character(character=None, character_name=name)
+        self._party.remove_character_by_id(id)
         
         urp = {"calldone": False}
         def _callback(args):
+            if not self._party:
+                self._party = Party()
             self._party.add_character(Character(args=args))
             urp["calldone"] = True
             urp["character"] = args
             if callback:
                 callback(args)
         
-        self._pool_append("getcharacter", name, _callback)
+        self._pool_append("getcharacter", id, _callback)
         
         if async: return None
         
@@ -175,23 +180,21 @@ class Genericwitticism(object):
         
         return urp["character"]
     
-    def delete_character(self, name, callback=None, force=False, async=True):
+    def delete_character(self, character, callback=None, force=False, async=True):
         """
             /api3/?session=<sessionkey>&command=deletecharacter&arg=ri4llrZXK
         """
         if not force and not self._party.get_character(name):
             return
         
-        self._party.remove_character(character=None, character_name=name)
-        
         urp = {"calldone": False}
         def _callback(args):
             urp["calldone"] = True
-                        
+            self._party.remove_character(character=character, character_name=None)
             if callback:
                 callback(args)
         
-        self._pool_append("deletecharacter", name, _callback)
+        self._pool_append("deletecharacter", character._id, _callback)
         
         if async: return
         
