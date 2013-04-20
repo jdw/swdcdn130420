@@ -24,8 +24,8 @@ def start_gui():
     eval(settings.GUI).stop()
     
 if __name__ == '__main__':
-    #t = Thread(target=start_gui)
-    #t.start()
+    t = Thread(target=start_gui)
+    t.start()
     
     eval(settings.NODE).submain()
     

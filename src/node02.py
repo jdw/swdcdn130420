@@ -41,16 +41,23 @@ def get_character_template_callback(result):
 def submain():
     api = genericwitticism.Genericwitticism(key=settings.KEY)    
     api.start()
+    
     party = api.get_party(force=True)
+    """
     print "party 1: ", party
     call = 0
+    
+    api.create_character("Tj0ng")
+    
     while not party:
         print "call: ", call
         call += 1
         time.sleep(0.1)
         party = api.get_party()
     
-    print "party 2: ", party
+    print "party size: ", party.get_amount_of_party_members()
+    print "party members", party
+    """
     api.stop()
      
      

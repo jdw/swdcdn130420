@@ -1,8 +1,20 @@
+# -*- coding: utf-8 -*-
+
 from character import Character
 
 class Party(object):
-    def __init__(self):
+    def __init__(self, args=None):
+        print args
         self._characters = {}
+    
+    def __str__(self):
+        ret = "Size: %d\nNames: %s"
+        names = ""
+        
+        for name, char in self._characters:
+            names += name + ", "
+            
+        return ret % (self.get_amount_of_party_members(), names)
     
     def get_character(self, name):
         if not name in self._characters:
@@ -28,6 +40,7 @@ class Party(object):
         
         if name in self._characters:
             self._characters.pop(character.name)
+            
         
         
     

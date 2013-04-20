@@ -94,7 +94,7 @@ class Genericwitticism(object):
         return None
         
         
-    def get_character_template(self, callback, force=False):
+    def get_character_template(self, callback=None, force=False):
         if not force and self._character_template:
             return self._character_template
         
@@ -105,7 +105,7 @@ class Genericwitticism(object):
             if callback:
                 callback(args)
         
-        self._pool_append("getchartemplate", None, callback)
+        self._pool_append("getchartemplate", None, _callback)
         
         return None
     
@@ -135,3 +135,19 @@ class Genericwitticism(object):
         
         return None
     
+    
+    def get_character(self, name, callback=None, force=False):
+        #api3/?session=<sessionkey>&command=getcharacter&arg=ri4llrZXK
+        if not force and self._party.get_character(name):
+            return self._party.get_character(name)
+        
+        self._party.remove_character(character=None, character_name=name)
+        
+        def _callback(args):
+            self._party.add_character(Character(args))
+            if callback:
+                callback(args)
+        
+        self._pool_append("getcharacter", name, _callback)
+        
+        return None
