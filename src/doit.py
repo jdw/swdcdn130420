@@ -7,6 +7,7 @@ Created on 20 apr 2013
 '''
 
 import node01
+import node02
 
 if __name__ == '__main__':
-    node01.submain()
+    node02.submain()

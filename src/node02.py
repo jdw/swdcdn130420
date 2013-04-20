@@ -1,31 +1,45 @@
 # -*- coding: utf-8 -*-
 """
-When logged in to the game system, your browser will have two new cookies set, �devnull_session� and �devnull_apikey�.
-The first one is recreated for each login, but the second one will be the same between sessions.
-Either one can be used as �session� variable when making a call to the API.
+Challenge:
 
-Each team can create a party of up to three player characters, who can explore the dungeons.
-To see which characters are in the party (currently none), use the following API call;
+To create a character, you must first retrieve the character template. The template describe which properties of the character object will be sent later, when retrieving the current status of a character. Make the call and display the result in a formatted way that makes it easy to see the properties at a glance;
 
-/api3/?session=<sessionkey>&command=getparty
+/api3/?session=<sessionkey>&command=getchartemplate
 
-To make sure that the server isn�t overloaded during gameplay, create a request dispatcher that squelches requests per second to the
-server. 
+Now create a character. The properties which can be modified are ‘name’, ‘str’, ‘dex’, ‘con’, ‘int’ and ‘wis’, the latter ones corresponding to the classical role-playing game characteristics of strength, dexterity, constitution, intelligence and wisdom.
 
-Demonstrate both that information can be fetched (using the getparty call) and that the squelch works when you try to send more than
-10 requests per seconds to the server.
+In this game intelligence and wisdom is not used and so need not be modified.
+
+In the beginning each character has 10 allocation points. each characteristic (‘str’, for example) have 10 base points and can be allocated up to 8 allocation points for a total of 18.
+
+‘Str’ higher than 15 increases attack damage, ‘dex’ higher than 15 increases chance of attack, defense and speed, ‘con’ higher than 15 gives additional hit points on level up.
+Use the following APi call to create a new character;
+
+/api3/?session=<sessionkey>&command=createcharacter&arg={‘name’:’foobar’,’str’:’15’,’dex’:’15’,’con:’10’,’int’:’10’,’wis’:’10’}
+
+Then use the getparty API call to make sure that you have a new character in your party.
+The new information will be an id for the new character. Now use the following API call to get the current status of your newly created character (replace ri4llrZXK with your actual character id, obviously :) ;
+
+/api3/?session=<sessionkey>&command=getcharacter&arg=ri4llrZXK
+
+Finally, delete your new character, using the following API call;
+
+/api3/?session=<sessionkey>&command=deletecharacter&arg=ri4llrZXK
+
+And verify that the character is indeed deleted by calling getparty once more.
 """
 
 
 import genericwitticism
 
-         
+def get_character_template_callback(result):
+    print result
+
 def submain():
-    api = genericwitticism.Genericwitticism(key="c577eb41-c931-4526-9c52-e9b361eba8c3")
-    
+    api = genericwitticism.Genericwitticism(key="c577eb41-c931-4526-9c52-e9b361eba8c3")    
     api.start()
     
-    api.get_party(hej)
+    
      
      
      
