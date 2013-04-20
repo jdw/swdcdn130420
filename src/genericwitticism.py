@@ -4,7 +4,8 @@ import httplib
 from threading import Thread
 import json
 
-import character
+from character import Character
+from party import Party
 
 def _squelcher():
     Genericwitticism.pool = []
@@ -76,7 +77,7 @@ class Genericwitticism(object):
         
         self._party = None
         def _callback(args):
-            self._party = args
+            self._party = Party()
             if callback:
                 callback(args)
         
@@ -101,7 +102,7 @@ class Genericwitticism(object):
         return None
     
     def create_character(self, name, str=10, dex=10, con=10, int=10, wis=10, force=False):
-        t_char = character.Character()
+        t_char = Character()
         t_char.name = name
         
         Genericwitticism.pool.append((self._call_api, ("createcharacter", args, callback)))
