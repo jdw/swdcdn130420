@@ -90,6 +90,21 @@ class Character(object):
 
     def getWisdom(self):
         return self._wis 
+    
+    def setStrength(self, value):
+        self._setAttribute(self._str, value)
+
+    def setDexterity(self, value):
+        self._setAttribute(self._dex, value)
+
+    def setConstitution(self, value):
+        self._setAttribute(self._con, value)
+
+    def setIntelligence(self, value):
+        self._setAttribute(self._int, value)
+
+    def setWisdom(self, value):
+        self._setAttribute(self._wis, value)
 
     @staticmethod
     def test():
