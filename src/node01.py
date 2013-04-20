@@ -18,7 +18,7 @@ Demonstrate both that information can be fetched (using the getparty call) and t
 
 
 import genericwitticism
-
+import settings
     
 def hej(parsed):
     print parsed
@@ -27,7 +27,7 @@ def hej(parsed):
         print c
      
 def submain():
-    api = genericwitticism.Genericwitticism(key="c577eb41-c931-4526-9c52-e9b361eba8c3")
+    api = genericwitticism.Genericwitticism(settings.KEY)
     
     api.start()
     api.get_party(hej)
