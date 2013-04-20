@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 
 import time
-import httplib
+import httplib, urllib
 from threading import Thread
 import json
 
@@ -30,7 +31,7 @@ class Genericwitticism(object):
         self.host = host if host else "genericwitticism.com"
         self.port = port if port else 8000
         self.key = key
-        self.base_path =  "/api3/?session=%s&command=%s"
+        self.base_path =  "/api3/?"
         self._party = None
         self._character_template = None
     
@@ -48,15 +49,22 @@ class Genericwitticism(object):
             raise "Not started!"
             
         command, api_args, callback = args
-        base_path = self.base_path % (self.key, command)
-        if api_args:
-            base_path = base_path + api_args
-            
-        connection = httplib.HTTPSConnection(self.host, self.port)
-        connection.request("GET", base_path)
+        print "https://%s:%d%s" % (self.host, self.port, self.base_path)
         
+        if api_args:
+            params = urllib.urlencode({'session': self.key, "command": command, 'arg': api_args})
+        else:
+            params = urllib.urlencode({'session': self.key, "command": command})
+            
+        connection = httplib.HTTPSConnection(self.host, self.port) 
+        connection.request("GET", self.base_path, params, {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"})
+        
+        
+        print "params: ",params
         response = connection.getresponse()
         results_json = response.read()
+        print "orka: ",results_json
+        """
         results = json.loads(results_json)
         
         if "error" in results:
@@ -67,7 +75,8 @@ class Genericwitticism(object):
         
         connection.close()
         callback(results)
-    
+        """
+            
     def _pool_append(self, name, args, callback):
         Genericwitticism.pool.append((self._call_api, (name, args, callback)))
         
@@ -101,10 +110,22 @@ class Genericwitticism(object):
         
         return None
     
-    def create_character(self, name, str=10, dex=10, con=10, int=10, wis=10, force=False):
+    def create_character(self, name, str=10, dex=10, con=10, int=10, wis=10, callback=None, force=False):
         t_char = Character()
         t_char.name = name
-        
-        Genericwitticism.pool.append((self._call_api, ("createcharacter", args, callback)))
+        t_char.setStrength(15)
+        t_char.setConstitution(con)
+        t_char.setDexterity(15)
+        t_char.setIntelligence(int)
+        t_char.setWisdom(wis)
     
+        def _callback(args):
+            print "hej", args
+            if callback:
+                callback(args)
+                
+        j = "{‘name’:’foobar’,’str’:’15’,’dex’:’15’,’con:’10’,’int’:’10’,’wis’:’10’}"
+        self._pool_append("createcharacter", j, _callback)
+        
+        return None
     
