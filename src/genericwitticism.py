@@ -44,9 +44,23 @@ class Genericwitticism(object):
         
         connection = httplib.HTTPSConnection(self.host, self.port)
         connection.request("GET", base_path)
-        results_json = connection.getresponse().read()
+        response = connection.getresponse()
+        
+        results_json = response.read()
         results = json.loads(results_json)
+        
+        if "error" in results:
+            if "Could not find valid session from provided api key or session key" in results["error"]:
+                raise Exception("No valid session for API key %s" % self.key)
+
+            return
+        
         callback(results)
         
     def get_party(self, callback):
         Genericwitticism.pool.append((self._call_api, ("getparty",callback)))
+        
+    def get_character_template(self, callback):
+        Genericwitticism.pool.append((self._call_api, ("getchartemplate",callback)))
+    
+    

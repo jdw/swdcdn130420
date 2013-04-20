@@ -39,7 +39,7 @@ def submain():
     api = genericwitticism.Genericwitticism(key="c577eb41-c931-4526-9c52-e9b361eba8c3")    
     api.start()
     
-    
+    api.get_character_template(get_character_template_callback)
      
      
      
