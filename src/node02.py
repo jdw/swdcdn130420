@@ -42,22 +42,20 @@ def submain():
     api = genericwitticism.Genericwitticism(key=settings.KEY)    
     api.start()
     
-    party = api.get_party(force=True)
-    """
-    print "party 1: ", party
-    call = 0
+    party = api.get_party(force=True, async=False)
+    print party
     
-    api.create_character("Tj0ng")
+    api.create_character("Hejdu", force=True, async=False)
     
-    while not party:
-        print "call: ", call
-        call += 1
-        time.sleep(0.1)
-        party = api.get_party()
+    party = api.get_party(force=True, async=False)
+    print party
     
-    print "party size: ", party.get_amount_of_party_members()
-    print "party members", party
-    """
+    for c_name in party.get_character_names():
+        api.delete_character(c_name, force=True, async=False)
+    
+    party = api.get_party(force=True, async=False)
+    print party
+    
     api.stop()
      
      

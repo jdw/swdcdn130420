@@ -49,7 +49,6 @@ class Genericwitticism(object):
             raise "Not started!"
             
         command, api_args, callback = args
-        print "https://%s:%d%s" % (self.host, self.port, self.base_path)
         
         if api_args:
             path = "%ssession=%s&command=%s&arg=%s" % (self.base_path, self.key, command, api_args)
@@ -79,19 +78,28 @@ class Genericwitticism(object):
     def _pool_append(self, name, args, callback):
         Genericwitticism.pool.append((self._call_api, (name, args, callback)))
         
-    def get_party(self, callback=None, force=False):
+    def get_party(self, callback=None, force=False, async=True):
         if not force and self._party:
             return self._party
         
         self._party = None
+        urp = {"calldone": False}
+        
         def _callback(args):
             self._party = Party(args)
+            urp["calldone"] = True
             if callback:
                 callback(args)
         
         self._pool_append("getparty", None, _callback)
         
-        return None
+        if async:
+            return None
+        
+        while not urp["calldone"]:
+            time.sleep(0.1)
+        
+        return self._party
         
         
     def get_character_template(self, callback=None, force=False):
@@ -109,7 +117,7 @@ class Genericwitticism(object):
         
         return None
     
-    def create_character(self, name, str=10, dex=10, con=10, int=10, wis=10, callback=None, force=False):
+    def create_character(self, name, str=10, dex=10, con=10, int=10, wis=10, callback=None, force=False, async=True):
         t_char = Character()
         t_char.name = name
         t_char.setStrength(15)
@@ -118,8 +126,10 @@ class Genericwitticism(object):
         t_char.setIntelligence(int)
         t_char.setWisdom(wis)
     
+        urp = {"calldone": False}
         def _callback(args):
-            print "hej", args
+            urp["calldone"] = True
+            urp["character"] = args
             
             #self._party.add_character(Character(args))
             
@@ -133,21 +143,58 @@ class Genericwitticism(object):
         #print j
         self._pool_append("createcharacter", j, _callback)
         
-        return None
+        if async: return None
+        
+        while not urp["calldone"]: time.sleep(0.1)
+        
+        return urp["character"]
     
     
-    def get_character(self, name, callback=None, force=False):
-        #api3/?session=<sessionkey>&command=getcharacter&arg=ri4llrZXK
+    def get_character(self, name, callback=None, force=False, async=True):
+        """
+            api3/?session=<sessionkey>&command=getcharacter&arg=ri4llrZXK
+        """
         if not force and self._party.get_character(name):
             return self._party.get_character(name)
         
         self._party.remove_character(character=None, character_name=name)
         
+        urp = {"calldone": False}
         def _callback(args):
             self._party.add_character(Character(args=args))
+            urp["calldone"] = True
+            urp["character"] = args
             if callback:
                 callback(args)
         
         self._pool_append("getcharacter", name, _callback)
         
-        return None
+        if async: return None
+        
+        while not urp["calldone"]: time.sleep(0.1)
+        
+        return urp["character"]
+    
+    def delete_character(self, name, callback=None, force=False, async=True):
+        """
+            /api3/?session=<sessionkey>&command=deletecharacter&arg=ri4llrZXK
+        """
+        if not force and not self._party.get_character(name):
+            return
+        
+        self._party.remove_character(character=None, character_name=name)
+        
+        urp = {"calldone": False}
+        def _callback(args):
+            urp["calldone"] = True
+                        
+            if callback:
+                callback(args)
+        
+        self._pool_append("deletecharacter", name, _callback)
+        
+        if async: return
+        
+        while not urp["calldone"]: time.sleep(0.1)
+        
+        return
