@@ -16,50 +16,21 @@ Demonstrate both that information can be fetched (using the getparty call) and t
 10 requests per seconds to the server.
 """
 
-import time
-import httplib
-from threading import Thread
-import json
 
-pool = []
-def squelcher():
-    global pool
-    
-    while True:
-        if len(pool):
-            func, args = pool.pop()
-            func(args)
-        time.sleep(0.1)
+import genericwitticism
 
-def call_api(args):
-    command, callback = args
-    host = "genericwitticism.com"
-    port = 8000
-    base_path =  "/api3/?session=c577eb41-c931-4526-9c52-e9b361eba8c3&command=%s" % command
-    print base_path
-    connection = httplib.HTTPSConnection(host, port)
-    connection.request("GET", base_path)
-    results = connection.getresponse().read()
     
-    callback(results)
-    
-def get_party(callback):
-    pool.append((call_api, ("getparty",callback)))
-
-def hej(args):
-    print args
-    
-    parsed = json.loads(args)
+def hej(parsed):
     print parsed
-    
     print "Characters in party: "
     for c in parsed["characters"]:
         print c
      
 def submain():
-     t = Thread(target=squelcher)
-     t.start()
-     get_party(hej)
+    api = genericwitticism.Genericwitticism(key="c577eb41-c931-4526-9c52-e9b361eba8c3")
+    
+    api.start()
+    api.get_party(hej)
      
      
      
