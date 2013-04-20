@@ -52,30 +52,29 @@ class Genericwitticism(object):
         print "https://%s:%d%s" % (self.host, self.port, self.base_path)
         
         if api_args:
-            params = urllib.urlencode({'session': self.key, "command": command, 'arg': api_args})
+            path = "%ssession=%s&command=%s&arg=%s" % (self.base_path, self.key, command, api_args)
         else:
-            params = urllib.urlencode({'session': self.key, "command": command})
+            path = "%ssession=%s&command=%s" % (self.base_path, self.key, command)
             
         connection = httplib.HTTPSConnection(self.host, self.port) 
-        connection.request("GET", self.base_path, params, {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"})
+        connection.request("GET", path.encode('latin-1'))
         
-        
-        print "params: ",params
         response = connection.getresponse()
         results_json = response.read()
-        print "orka: ",results_json
-        """
         results = json.loads(results_json)
         
         if "error" in results:
-            if "Could not find valid session from provided api key or session key" in results["error"]:
+            problem = results["error"]
+            if "Could not find valid session from provided api key or session key" in problem:
                 raise Exception("No valid session for API key %s" % self.key)
 
+            if "Unable to parse character object" in problem:
+                raise Exception("Not able to parse object")
+             
             return
         
         connection.close()
         callback(results)
-        """
             
     def _pool_append(self, name, args, callback):
         Genericwitticism.pool.append((self._call_api, (name, args, callback)))
@@ -86,7 +85,7 @@ class Genericwitticism(object):
         
         self._party = None
         def _callback(args):
-            self._party = Party()
+            self._party = Party(args)
             if callback:
                 callback(args)
         
@@ -121,10 +120,17 @@ class Genericwitticism(object):
     
         def _callback(args):
             print "hej", args
+            
+            #self._party.add_character(Character(args))
+            
             if callback:
                 callback(args)
                 
-        j = "{‘name’:’foobar’,’str’:’15’,’dex’:’15’,’con:’10’,’int’:’10’,’wis’:’10’}"
+        #j = "{‘name’:’foobar’,’str’:’15’,’dex’:’15’,’con:’10’,’int’:’10’,’wis’:’10’}"
+        j = '{"name":"'+name+'","str":"15","dex":"15","con":"10","int":"10","wis":"10"}'
+        #j = t_char.__str__()
+        
+        #print j
         self._pool_append("createcharacter", j, _callback)
         
         return None
