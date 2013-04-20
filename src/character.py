@@ -140,7 +140,7 @@ class Character(object):
         assert character._allocationPoints == 0
         data = character.__str__()
         print data
-        character.getData('{"name":"newName","str":"1"}')
+        character.setData('{"name":"newName","str":"1"}')
         print character.__str__()
         print "test passed"
 
@@ -160,7 +160,7 @@ class Character(object):
                 return self._setAttribute(attribute, jdata[ObjString])
         return attribute
     
-    def getData(self, data):
+    def setData(self, data):
         jdata = json.loads(data)
         self._setAndValidateData(jdata,"name", self.name)
         self._str = self._setAndValidateData(jdata,"str", self._str)
