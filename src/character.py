@@ -24,15 +24,15 @@ class Character(object):
     _nextId = 0
 
     def __init__(self, args = None):
-        setData(args)
-        if not args:
-            self.name =""
-            self._str = 10
-            self._dex = 10
-            self._con = 10
-            self._int = 10
-            self._wis = 10
-            self._allocationPoints = 10
+        
+        self.name =""
+        self._str = 10
+        self._dex = 10
+        self._con = 10
+        self._int = 10
+        self._wis = 10
+        self._allocationPoints = 10
+        self.setData(args)
         self._id = Character._nextId
         Character._nextId += 1
         
@@ -141,7 +141,9 @@ class Character(object):
         data = character.__str__()
         print data
         character.setData('{"name":"newName","str":"1"}')
+        character2 = Character(character.__str__())
         print character.__str__()
+        print character2.__str__()
         print "test passed"
 
         
@@ -161,13 +163,14 @@ class Character(object):
         return attribute
     
     def setData(self, data):
-        jdata = json.loads(data)
-        self._setAndValidateData(jdata,"name", self.name)
-        self._str = self._setAndValidateData(jdata,"str", self._str)
-        self._dex = self._setAndValidateData(jdata,"dex", self._dex)
-        self._con = self._setAndValidateData(jdata,"con", self._con)
-        self._int = self._setAndValidateData(jdata,"int", self._int)
-        self._wis = self._setAndValidateData(jdata,"wis", self._wis) 
+        if data:
+            jdata = json.loads(data)
+            self._setAndValidateData(jdata,"name", self.name)
+            self._str = self._setAndValidateData(jdata,"str", self._str)
+            self._dex = self._setAndValidateData(jdata,"dex", self._dex)
+            self._con = self._setAndValidateData(jdata,"con", self._con)
+            self._int = self._setAndValidateData(jdata,"int", self._int)
+            self._wis = self._setAndValidateData(jdata,"wis", self._wis) 
          
 if __name__ == '__main__':
     Character.test()
