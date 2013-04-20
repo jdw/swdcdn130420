@@ -19,14 +19,18 @@ Demonstrate both that information can be fetched (using the getparty call) and t
 
 import genericwitticism
 
+class Character(object):
+    
+    def __init__(self):
+        self.stren = 10
+        self.dex = 10
+        self.con = 10
+        self.int = 10
+        self.wis = 10
+    
          
-def submain():
-    api = genericwitticism.Genericwitticism(key="c577eb41-c931-4526-9c52-e9b361eba8c3")
-    
-    api.start()
-    
-    api.get_party(hej)
-     
+    def submain():
+         
      
      
      
