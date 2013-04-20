@@ -22,15 +22,17 @@ import string
 class Character(object):
     
     _nextId = 0
-    
-    def __init__(self):
-        self.name =""
-        self._str = 10
-        self._dex = 10
-        self._con = 10
-        self._int = 10
-        self._wis = 10
-        self._allocationPoints = 10;
+
+    def __init__(self, args = None):
+        setData(args)
+        if not args:
+            self.name =""
+            self._str = 10
+            self._dex = 10
+            self._con = 10
+            self._int = 10
+            self._wis = 10
+            self._allocationPoints = 10
         self._id = Character._nextId
         Character._nextId += 1
         
