@@ -144,7 +144,7 @@ class Genericwitticism(object):
         self._party.remove_character(character=None, character_name=name)
         
         def _callback(args):
-            self._party.add_character(Character(args))
+            self._party.add_character(Character(args=args))
             if callback:
                 callback(args)
         
