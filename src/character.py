@@ -17,6 +17,7 @@ Demonstrate both that information can be fetched (using the getparty call) and t
 """
 
 import json
+import string
 
 class Character(object):
     
@@ -40,11 +41,6 @@ class Character(object):
         return attribute
     
     def _setAttribute(self, attribute, value):
-        print "setting " , attribute , ": " , value
-        print "(self._allocationPoints + attribute): " , (self._allocationPoints + attribute)
-        print "value: " , value
-        print "(self._allocationPoints + attribute) >= value: " , (self._allocationPoints + attribute) >= int(value)
-        
         
         if int(value) <= 18 and int(value) > 0 and (self._allocationPoints + attribute) >= int(value):
             self._allocationPoints += attribute
@@ -105,27 +101,29 @@ class Character(object):
         return self._wis 
     
     def setStrength(self, value):
-        self._addToAttribute(self._str, value)
+        self._str = self._setAttribute(self._str, value)
 
     def setDexterity(self, value):
-        self._addToAttribute(self._dex, value)
+        self._dex =self._setAttribute(self._dex, value)
 
     def setConstitution(self, value):
-        self._addToAttribute(self._con, value)
+        self._con =self._setAttribute(self._con, value)
 
     def setIntelligence(self, value):
-        self._addToAttribute(self._int, value)
+        self._int =self._setAttribute(self._int, value)
 
     def setWisdom(self, value):
-        self._addToAttribute(self._wis, value)
+        self._wis =self._setAttribute(self._wis, value)
 
     @staticmethod
     def test():
         character = Character()
         character.name = "foobar"
-        for i in range(0,8): 
+        for i in range(0,4): 
             character.increaseStrength()
-        assert character._str == 18
+        assert character._str == 14
+        character.setStrength(18)
+        
         assert character._allocationPoints == 2
         character.increaseStrength()
         character.increaseDexterity()
@@ -140,7 +138,7 @@ class Character(object):
         assert character._allocationPoints == 0
         data = character.__str__()
         print data
-        character.getData('{"name":"newName","str":"1"}')
+        character.setData('{"name":"newName","str":"1"}')
         print character.__str__()
         print "test passed"
 
@@ -149,7 +147,7 @@ class Character(object):
         #'{"key1":1,"key2":2,"key3":3}'
         #{‘name’:’foobar’,’str’:’15’,’dex’:’15’,’con:’10’,’int’:’10’,’wis’:’10’}
         #jsobj["a"]["b"]["e"].append({"f":var3, "g":var4, "h":var5})
-        jsonObj = json.dumps({'name': self.name,'str': self._str, 'dex': self._dex, 'con': self._con, 'int': self._int, 'wis': self._wis})
+        jsonObj = json.dumps({'name': self.name,'str': '' + str(self._str) + '', 'dex': '' + str(self._dex) + '', 'con': '' + str(self._con) + '', 'int': '' + str(self._int) + '', 'wis': '' + str(self._wis) + ''})
         return jsonObj.__str__()
 
     def _setAndValidateData(self,jdata, ObjString, attribute):
@@ -160,7 +158,7 @@ class Character(object):
                 return self._setAttribute(attribute, jdata[ObjString])
         return attribute
     
-    def getData(self, data):
+    def setData(self, data):
         jdata = json.loads(data)
         self._setAndValidateData(jdata,"name", self.name)
         self._str = self._setAndValidateData(jdata,"str", self._str)
